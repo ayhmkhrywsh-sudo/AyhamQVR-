@@ -1,0 +1,160 @@
+
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ayhamQVR | عالم الألعاب</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#0b1020;color:white;
+ font-family:Arial,sans-serif;text-align:center;
+}
+header{padding:35px 15px;background:#151d33}
+h1{color:#19c6b4;font-size:35px}
+header p{color:#b8c4df}
+main{max-width:850px;margin:auto;padding:20px}
+.card{
+ background:#151d33;border:1px solid #344366;
+ border-radius:18px;padding:22px;margin:20px 0;
+}
+h2{color:#7c5cff}
+button{
+ background:#7c5cff;color:white;border:0;
+ padding:12px 20px;border-radius:10px;
+ font-size:17px;margin:6px;cursor:pointer;
+}
+button:hover{background:#19a99b}
+#board{
+ display:grid;grid-template-columns:repeat(3,85px);
+ justify-content:center;gap:7px;margin:20px auto;
+}
+.cell{
+ height:85px;background:#273653;border-radius:12px;
+ display:grid;place-items:center;font-size:35px;
+ cursor:pointer;
+}
+.result{color:#19c6b4;font-size:19px}
+footer{padding:25px;color:#aab5d0}
+</style>
+</head>
+<body>
+
+<header>
+<h1>🎮 ayhamQVR</h1>
+<p>مرحباً بك في عالم الألعاب الممتع!</p>
+</header>
+
+<main>
+
+<div class="card">
+<h2>🌟 أهلاً بك في عالم الألعاب</h2>
+<p>العب واستمتع بألعاب مجانية مباشرة من موقعنا!</p>
+</div>
+
+<div class="card">
+<h2>⭕ لعبة XO</h2>
+<div id="board">
+<div class="cell" onclick="play(0)"></div>
+<div class="cell" onclick="play(1)"></div>
+<div class="cell" onclick="play(2)"></div>
+<div class="cell" onclick="play(3)"></div>
+<div class="cell" onclick="play(4)"></div>
+<div class="cell" onclick="play(5)"></div>
+<div class="cell" onclick="play(6)"></div>
+<div class="cell" onclick="play(7)"></div>
+<div class="cell" onclick="play(8)"></div>
+</div>
+<p id="xo" class="result">الدور على X</p>
+<button onclick="resetXO()">إعادة اللعبة</button>
+</div>
+
+<div class="card">
+<h2>✊ حجر ورقة مقص</h2>
+<button onclick="rps('حجر')">✊ حجر</button>
+<button onclick="rps('ورقة')">✋ ورقة</button>
+<button onclick="rps('مقص')">✌️ مقص</button>
+<p id="rps" class="result">اختر حركتك!</p>
+</div>
+
+<div class="card">
+<h2>⚡ تحدي السرعة</h2>
+<p>اضغط الزر أكبر عدد ممكن خلال 10 ثوانٍ!</p>
+<h2 id="score">0</h2>
+<button onclick="startGame()">ابدأ التحدي</button>
+<button onclick="clickGame()">اضغط بسرعة!</button>
+<p id="timer" class="result">الوقت: 10</p>
+</div>
+
+</main>
+
+<footer>
+<p>© 2026 ayhamQVR - جميع الحقوق محفوظة</p>
+<p>صنع بحب ❤️ لعشاق الألعاب</p>
+</footer>
+
+<script>
+let cells=Array(9).fill("");
+let turn="X",finished=false;
+
+function play(i){
+ if(cells[i]||finished)return;
+ cells[i]=turn;
+ document.querySelectorAll(".cell")[i].textContent=turn;
+ let wins=[
+ [0,1,2],[3,4,5],[6,7,8],
+ [0,3,6],[1,4,7],[2,5,8],
+ [0,4,8],[2,4,6]
+ ];
+ if(wins.some(w=>w.every(x=>cells[x]===turn))){
+ document.getElementById("xo").textContent="🎉 الفائز هو "+turn;
+ finished=true;return;
+ }
+ if(cells.every(x=>x)){
+ document.getElementById("xo").textContent="تعادل!";
+ finished=true;return;
+ }
+ turn=turn==="X"?"O":"X";
+ document.getElementById("xo").textContent="الدور على "+turn;
+}
+function resetXO(){
+ cells.fill("");turn="X";finished=false;
+ document.querySelectorAll(".cell").forEach(c=>c.textContent="");
+ document.getElementById("xo").textContent="الدور على X";
+}
+
+function rps(user){
+ let choices=["حجر","ورقة","مقص"];
+ let computer=choices[Math.floor(Math.random()*3)];
+ let result=user===computer?"تعادل!":
+ (user==="حجر"&&computer==="مقص"||
+ user==="ورقة"&&computer==="حجر"||
+ user==="مقص"&&computer==="ورقة")?"أنت الفائز! 🎉":"الكمبيوتر فاز!";
+ document.getElementById("rps").textContent=
+ "أنت: "+user+" | الكمبيوتر: "+computer+" — "+result;
+}
+
+let score=0,time=10,active=false,clock;
+function startGame(){
+ clearInterval(clock);
+ score=0;time=10;active=true;
+ document.getElementById("score").textContent=score;
+ document.getElementById("timer").textContent="الوقت: "+time;
+ clock=setInterval(()=>{
+ time--;
+ document.getElementById("timer").textContent="الوقت: "+time;
+ if(time<=0){
+ clearInterval(clock);active=false;
+ document.getElementById("timer").textContent="انتهى الوقت! نتيجتك: "+score;
+ }
+ },1000);
+}
+function clickGame(){
+ if(!active)return;
+ score++;
+ document.getElementById("score").textContent=score;
+}
+</script>
+</body>
+</html>
